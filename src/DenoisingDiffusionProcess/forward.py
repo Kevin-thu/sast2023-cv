@@ -97,7 +97,7 @@ class GaussianForwardProcess(ForwardModel):
         mean=self.alphas_sqrt[t]*x_t
         std=self.betas_sqrt[t]
         
-        noise=torch.randn_like(x_0)
+        noise=torch.randn_like(x_t)
         output=mean+std*noise        
         
         if not return_noise:

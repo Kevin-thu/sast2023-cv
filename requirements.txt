@@ -1,0 +1,13 @@
+torch
+lightning==2.0.5
+transformers
+diffusers
+einops
+torchvision
+numpy
+matplotlib
+imageio
+scikit-image
+kornia
+tqdm
+jupyter
