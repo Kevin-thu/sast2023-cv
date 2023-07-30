@@ -55,8 +55,13 @@ class LatentDiffusion(pl.LightningModule):
         self.batch_size=batch_size
         
         self.vae = AutoEncoder(vae_model_type)
+        # TODO question: What do these two lines of code do? 
+        for p in self.vae.parameters():
+            p.requires_grad = False
+            
         with torch.no_grad():
             self.latent_dim = self.vae.encode(torch.ones(1,3,256,256)).shape[1]
+            
         # TODO begin: Complete the DenoisingDiffusionProcess p_loss function
         # Challenge: Can you figure out the forward and reverse process defined in DenoisingDiffusionProcess?
         self.model = DenoisingDiffusionProcess(generated_channels=self.latent_dim,
@@ -98,7 +103,7 @@ class LatentDiffusion(pl.LightningModule):
         return loss
     
     def configure_optimizers(self):
-        # TODO begin: Define the AdamW optimizer here
+        # TODO begin: Define the AdamW optimizer here (10 p.t.s)
         # Hint: model.parameters(), requires_grad, lr
         return # torch.optim.AdamW(...)
         # TODO end
