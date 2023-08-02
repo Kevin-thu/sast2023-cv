@@ -7,10 +7,10 @@ from diffusers.models import AutoencoderKL
 from .DenoisingDiffusionProcess import *
 
 # TODO begin: Inherit the AutoEncoder class from nn.Module
-class AutoEncoder(object):
+class AutoEncoder(nn.Module):
 # TODO end
     def __init__(self,
-                 model_type= "stabilityai/sd-vae-ft-ema"
+                 model_type= "C:\\Users\\admin\\.cache\\huggingface\\hub\\models--stabilityai--sd-vae-ft-ema"
                 ):
         """
             A wrapper for an AutoEncoder model
@@ -55,13 +55,10 @@ class LatentDiffusion(pl.LightningModule):
         self.batch_size=batch_size
         
         self.vae = AutoEncoder(vae_model_type)
-        # TODO question: What do these two lines of code do? 
         for p in self.vae.parameters():
             p.requires_grad = False
-            
         with torch.no_grad():
             self.latent_dim = self.vae.encode(torch.ones(1,3,256,256)).shape[1]
-            
         # TODO begin: Complete the DenoisingDiffusionProcess p_loss function
         # Challenge: Can you figure out the forward and reverse process defined in DenoisingDiffusionProcess?
         self.model = DenoisingDiffusionProcess(generated_channels=self.latent_dim,
@@ -76,12 +73,12 @@ class LatentDiffusion(pl.LightningModule):
     def input_T(self, input):
         # TODO begin: Transform the input samples in [0, 1] range to [-1, 1]
         # Challenge: Why should we make this transform?
-        return input
+        return input * 2 - 1
         # TODO end
     
     def output_T(self, input):
         # TODO begin: Transform the output samples in [-1, 1] range to [0, 1]
-        return input
+        return (input + 1) / 2
         # TODO end
     
     def training_step(self, batch, batch_idx):   
@@ -103,7 +100,7 @@ class LatentDiffusion(pl.LightningModule):
         return loss
     
     def configure_optimizers(self):
-        # TODO begin: Define the AdamW optimizer here (10 p.t.s)
+        # TODO begin: Define the AdamW optimizer here
         # Hint: model.parameters(), requires_grad, lr
-        return # torch.optim.AdamW(...)
+        return torch.optim.AdamW(list(filter(lambda p: p.requires_grad, self.model.parameters())), lr=self.lr)
         # TODO end
