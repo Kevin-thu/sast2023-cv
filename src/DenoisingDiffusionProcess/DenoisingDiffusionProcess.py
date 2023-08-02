@@ -96,5 +96,5 @@ class DenoisingDiffusionProcess(nn.Module):
 
         # TODO begin: apply the loss_fn
         # Hint: Check the usage of F.mse_loss and review the loss function learned in class
-        return self.loss_fn(noise, noise_hat)
+        return self.loss_fn(noise_hat, noise)
         # TODO end

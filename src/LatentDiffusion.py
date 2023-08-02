@@ -50,7 +50,9 @@ class LatentDiffusion(pl.LightningModule):
         
         super().__init__()
         self.lr = lr
+
         # TODO question: What's buffer?
+        # Reference answer: A buffer is part of the module's state, but it should not to be considered a trainable model parameter.         
         self.register_buffer('latent_scale_factor', torch.tensor(latent_scale_factor))
         self.batch_size=batch_size
         
@@ -68,6 +70,7 @@ class LatentDiffusion(pl.LightningModule):
     @torch.no_grad()
     def forward(self,*args,**kwargs):
         # TODO question: What's *args,**kwargs?
+        # Refer to Yifan Li's python handout.
         return self.output_T(self.vae.decode(self.model(*args,**kwargs) / self.latent_scale_factor))
     
     def input_T(self, input):
